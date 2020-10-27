@@ -1,0 +1,29 @@
+{% extends 'base.html'%} 
+{% block content %}
+<div class="container"><br><br>
+  <div class="row text-center">
+    {% if tutorialss%}
+      <h2>Found {{ tutorials|length }} tutorials with searched term '{{message}}'</h2>
+    {% else %}
+      <h2> Found 0 tutorials for the search term {{message}}</h2>
+    {% endif %}
+  </div>
+</div>
+<div class="container">
+    <div class="row">
+        {% if tutorials %}
+        {% for tutorials in tutorials %}
+        <div class="col-md-4 mt-3">
+            <div class="card zoom" id="cardoffwhite">
+                <a href="{% url 'tutorial' tutorial.id %}"><img src="{{tutorial.tutorial_image.url}}" style="width:100%;height:56%;" class="img-responsive" alt="Image"></a><br><hr>
+                <div class="card-body">
+                    <p><strong>Title:</strong> {{tutorial.title}}</p>
+                    <p><strong>Description:</strong> {{tutorial.description|truncatechars:50}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

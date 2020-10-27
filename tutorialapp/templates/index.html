@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+{%load static%}
+{%load cloudinary%}
+{% block content %}
+{{block.super}}
+
+<div class="container-fluid pb-5" id="mainprojview">
+    <h2 class=" ml-5 pt-5 text-center underline">Tutorials</h2>
+    <h5 class="text-muted text-center">As of {% now "jS \o\f F" %}</h5><br>
+    <div class="row">
+        {% for tutorial in tutorials %}
+        <div class="col-lg-3 p-3">
+            <div class="card zoom" id="cardoffwhite">
+                <a href="{% url 'tutorial' tutorial.id %}">
+                <img src="{{tutorial.tutorial_image.url}}" style="width:100%;height:56%;" class="img-responsive" alt="Card Image"></a><hr>
+                <h5 class="card-title pl-2 underline text-center"> {{tutorial.title}}</h5>
+                <div class="card-body">
+                    <p class=""><strong>By:</strong> {{tutorial.tutorial_author}}</p>
+                    <p class="card-text"><strong>About:</strong> {{tutorial.description|truncatechars:150}}</p>
+                    <a href="{% url 'tutorial' tutorial.id %}" class="card-link">View Tutorial</a>
+                </div><br>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6"><p class=""><strong>Posted:</strong> {{tutorial.created_on|date:"D d M"}}</p><br><br></div>
+                    </div>
+                </div>        
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div><br><br><br><br><br><br>
+
+
+{% endblock %}

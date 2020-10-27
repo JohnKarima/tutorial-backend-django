@@ -1,0 +1,27 @@
+{% extends 'base.html'%}
+{% load crispy_forms_tags %}
+{% block content %}
+{{block.super}}
+<div class="container">
+    <div class="row"><br><br>
+        <div class="card mb-4 border" id="cardoffwhite">
+            <div class="card-body mb-4">
+                <img src="{{tutorial.tutorial_image.url}}" style="width:100%;" class="card-img" alt="Image"><br><br><hr>
+            <div class="container text-center">
+                <p><strong>Title:</strong> {{tutorial.title}}</p>
+                <p><strong>By:</strong> {{tutorial.prof_ref.user.username}}</p>
+                <p class="underline"><strong>Full Description:</strong></p>           
+                <p>{{tutorial.description}}</p>
+                <p class="underline"><strong>Full Tutorial:</strong></p>           
+                <p>{{tutorial.tutorial_content}}</p></div>
+                <div class="container">
+                    <div class="row">
+                    </div>
+                </div><br><br><br>
+                    <p><strong>Posted:</strong> {{tutorial.created_on}}</p> 
+                    <p><a href="{%url 'index' %}">Back to Home Page</a></p>
+            </div>
+        </div>
+    </div>
+</div><br><br><br><br><br>
+ {% endblock %}
