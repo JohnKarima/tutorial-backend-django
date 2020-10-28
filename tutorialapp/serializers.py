@@ -4,7 +4,7 @@ from .models import Profile, Tutorial
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("user", "bio", "profile_photo")
+        fields = "__all__"
  
 class TutorialSerializer(serializers.ModelSerializer):
  
@@ -16,4 +16,5 @@ class TutorialSerializer(serializers.ModelSerializer):
                   'tutorial_image',
                   'tutorial_content',
                   'created_on',
+                  'updated_on',
                   'published',)

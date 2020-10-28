@@ -22,6 +22,7 @@ class Tutorial(models.Model):
     tutorial_content = models.TextField()
     tutorial_author = models.CharField(max_length = 30)
     created_on = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_on = models.DateTimeField(auto_now=True, null=True, blank=True)
     published = models.BooleanField(default=False)
     prof_ref = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='tutorials', null=True)
 

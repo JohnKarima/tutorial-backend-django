@@ -146,4 +146,24 @@ LOGIN_URL = 'login'
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
-)
+    'http://localhost:4200',
+
+) 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+
+# {
+#     "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjAzODI5OTk5LCJqdGkiOiI4ZDMyOTU3ZWY0MzA0MzY5OGI5MGE2NGZmZWI5YmQ5MSIsInVzZXJfaWQiOjR9.9hPSPtHDbhtFWlSgU0ImcnFVyqA8NCOYH210oChxM-0"
+
+    
+
+#     "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYwMzkxMTg0MSwianRpIjoiOWNiMTllYjBjMzI1NDFhOWExODk5MjNiN2YzMGZlMjQiLCJ1c2VyX2lkIjo0fQ.PfLQ4iRoioWNH5JkAlvjaDItQf98fUc_op8vgkiMmsQ",
+#     "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjAzODI1NzQxLCJqdGkiOiJhNzE3YmIzMWE1ZGM0OGExOTg4NjZlZGY2ZDE3Y2NiYSIsInVzZXJfaWQiOjR9.iVFIPvdwqq05FMUM0vKvV4trBS_9gF_sEWDAaqzxpK4"
+# }
+
+    

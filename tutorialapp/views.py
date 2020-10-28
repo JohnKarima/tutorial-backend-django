@@ -10,10 +10,15 @@ from django.http.response import Http404
 from rest_framework import generics
 from .serializers import ProfileSerializer, TutorialSerializer
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.shortcuts import render
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser 
+from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+import cloudinary.uploader
+
  
 @login_required
 def index(request):
@@ -38,12 +43,58 @@ def profile(request):
     tutorials = request.user.profile.tutorials.all()
     return render(request, 'users/profile.html', {"tutorials":tutorials[::-1]})
 
-class ListProfileView(generics.ListAPIView):
-    """
-    Provides a get method handler.
-    """
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+# class ListProfileView(generics.ListAPIView):
+#     """
+#     Provides a get method handler.
+#     """
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
+
+class ListProfileView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        profile_object = Profile.objects.all()
+        profile_serialize = ProfileSerializer(profile_object, many = True)
+        return Response(profile_serialize.data)
+    
+    def post(self, request):
+        profile_serialize = ProfileSerializer(data = request.data)
+        if profile_serialize.is_valid():
+            profile_serialize.save()
+            return Response(profile_serialize.data, status=status.HTTP_201_CREATED)
+        return Response(profile_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListUpdateProfileView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            return Profile.objects.get(pk=pk)
+        except Profile.ObjectDoesNotExist:
+            return Response(status.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request, pk):
+        profile_object = self.get_object(pk)
+        profile_serialize = ProfileSerializer(profile_object)
+        return Response(profile_serialize.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, pk):
+        profile_object = self.get_object(pk)
+        profile_serialize = ProfileSerializer(profile_object, data=request.data)
+        if profile_serialize.is_valid():
+            profile_serialize.save()
+            return Response(profile_serialize.data, status=status.HTTP_200_OK)
+        return Response(profile_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, pk):
+        profile_object = self.get_object(pk)
+        profile_object.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
+
+    
 
 @login_required
 def update(request):
@@ -87,12 +138,57 @@ def tutorial(request,tutorial_id):
         raise Http404()
     return render(request,"tutorial.html", {"tutorial":tutorial})
 
-class ListTutorialView(generics.ListAPIView):
-    """
-    Provides a get method handler.
-    """
-    queryset = Tutorial.objects.all()
-    serializer_class = TutorialSerializer
+# class ListTutorialView(generics.ListAPIView):
+#     """
+#     Provides a get method handler.
+#     """
+#     queryset = Tutorial.objects.all()
+#     serializer_class = TutorialSerializer
+
+class ListTutorialView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        tutorial_object = Tutorial.objects.all()
+        tutorial_serialize = TutorialSerializer(tutorial_object, many = True)
+        return Response(tutorial_serialize.data)
+    
+    def post(self, request):
+        tutorial_serialize = TutorialSerializer(data = request.data)
+        if tutorial_serialize.is_valid():
+            tutorial_serialize.save()
+            return Response(tutorial_serialize.data, status=status.HTTP_201_CREATED)
+        return Response(tutorial_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListUpdateTutorialView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            return Tutorial.objects.get(pk=pk)
+        except Tutorial.ObjectDoesNotExist:
+            return Response(status.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request, pk):
+        tutorial_object = self.get_object(pk)
+        tutorial_serialize = TutorialSerializer(tutorial_object)
+        return Response(tutorial_serialize.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, pk):
+        tutorial_object = self.get_object(pk)
+        tutorial_serialize = TutorialSerializer(tutorial_object, data=request.data)
+        if tutorial_serialize.is_valid():
+            tutorial_serialize.save()
+            return Response(tutorial_serialize.data, status=status.HTTP_200_OK)
+        return Response(tutorial_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, pk):
+        tutorial_object = self.get_object(pk)
+        tutorial_object.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
+
 
 @login_required
 def search_results(request):
@@ -104,3 +200,64 @@ def search_results(request):
     else:
         message = "You haven't searched for any tutorials yet"
     return render(request, 'search.html', {'message': message})
+
+
+
+
+# @api_view(['GET', 'POST', 'DELETE'])
+# def tutorial_list(request):
+#     if request.method == 'GET':
+#         tutorials = Tutorial.objects.all()
+        
+#         title = request.query_params.get('title', None)
+#         if title is not None:
+#             tutorials = tutorials.filter(title__icontains=title)
+        
+#         tutorials_serializer = TutorialSerializer(tutorials, many=True)
+#         return JsonResponse(tutorials_serializer.data, safe=False)
+#         # 'safe=False' for objects serialization
+ 
+#     elif request.method == 'POST':
+#         tutorial_data = JSONParser().parse(request)
+#         tutorial_serializer = TutorialSerializer(data=tutorial_data)
+#         if tutorial_serializer.is_valid():
+#             tutorial_serializer.save()
+#             return JsonResponse(tutorial_serializer.data, status=status.HTTP_201_CREATED) 
+#         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+#     elif request.method == 'DELETE':
+#         count = Tutorial.objects.all().delete()
+#         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+ 
+ 
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def tutorial_detail(request, pk):
+#     try: 
+#         tutorial = Tutorial.objects.get(pk=pk) 
+#     except Tutorial.DoesNotExist: 
+#         return JsonResponse({'message': 'The tutorial does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+ 
+#     if request.method == 'GET': 
+#         tutorial_serializer = TutorialSerializer(tutorial) 
+#         return JsonResponse(tutorial_serializer.data) 
+ 
+#     elif request.method == 'PUT': 
+#         tutorial_data = JSONParser().parse(request) 
+#         tutorial_serializer = TutorialSerializer(tutorial, data=tutorial_data) 
+#         if tutorial_serializer.is_valid(): 
+#             tutorial_serializer.save() 
+#             return JsonResponse(tutorial_serializer.data) 
+#         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+ 
+#     elif request.method == 'DELETE': 
+#         tutorial.delete() 
+#         return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+    
+        
+# @api_view(['GET'])
+# def tutorial_list_published(request):
+#     tutorials = Tutorial.objects.filter(published=True)
+        
+#     if request.method == 'GET': 
+#         tutorials_serializer = TutorialSerializer(tutorials, many=True)
+#         return JsonResponse(tutorials_serializer.data, safe=False)
