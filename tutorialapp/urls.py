@@ -4,6 +4,11 @@ from . import views
 from .views import ListProfileView, ListTutorialView, ListUpdateProfileView, ListUpdateTutorialView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+
 
 urlpatterns=[
     path('',views.index, name = 'index'),
@@ -21,8 +26,16 @@ urlpatterns=[
     path('api/profile/<int:pk>/', ListUpdateProfileView.as_view(), name="profile-all"),
     path('api/tutorial/', ListTutorialView.as_view(), name="tutorial-all"),
     path('api/tutorial/<int:pk>/', ListUpdateTutorialView.as_view(), name="tutorial-all"),
-    path('api/token/', TokenObtainPairView.as_view(), name="tutorial-all"),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name="tutorial-all"),
+    
+    # path('api/token/', TokenObtainPairView.as_view(), name="tutorial-all"),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name="tutorial-all"),
+
+
+
+    path('', include(router.urls)),
+
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
 
 
 

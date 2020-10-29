@@ -8,7 +8,7 @@ from cloudinary.forms import cl_init_js_callbacks
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404
 from rest_framework import generics
-from .serializers import ProfileSerializer, TutorialSerializer
+from .serializers import ProfileSerializer, TutorialSerializer, UserSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -18,7 +18,17 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 import cloudinary.uploader
+from rest_framework import viewsets
+from rest_framework import permissions
 
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    # permission_classes = [permissions.IsAuthenticated]
  
 @login_required
 def index(request):
